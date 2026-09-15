@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SOM Load Calculator</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f4f7;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .box {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 3px 12px #bbb;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin-top: 5px;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 8px;
+      background: #222;
+      color: white;
+      font-size: 18px;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #eef2f5;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+
+  <h1>📐 SOM Load Calculator</h1>
+
+  <p><b>Simply Supported Beam</b></p>
+
+  <label>Beam Length (m)</label>
+  <input type="number" id="length" placeholder="Example: 6">
+
+  <label>Point Load (kN)</label>
+  <input type="number" id="load" placeholder="Example: 10">
+
+  <label>Load Position from A (m)</label>
+  <input type="number" id="position" placeholder="Example: 3">
+
+  <button onclick="calculate()">CALCULATE</button>
+
+  <div class="result" id="result">
+    Enter values and press CALCULATE.
+  </div>
+
+</div>
+
+<script>
+
+function calculate() {
+
+  let L = parseFloat(document.getElementById("length").value);
+  let P = parseFloat(document.getElementById("load").value);
+  let a = parseFloat(document.getElementById("position").value);
+
+  if (isNaN(L) || isNaN(P) || isNaN(a)) {
+    document.getElementById("result").innerHTML =
+      "⚠️ Please enter all values.";
+    return;
+  }
+
+  if (a < 0 || a > L || L <= 0) {
+    document.getElementById("result").innerHTML =
+      "⚠️ Check the beam length and load position.";
+    return;
+  }
+
+  let b = L - a;
+
+  let RA = (P * b) / L;
+  let RB = (P * a) / L;
+
+  let maxMoment = RA * a;
+
+  document.getElementById("result").innerHTML = `
+    <h3>Results</h3>
+
+    <p><b>Reaction at A:</b> ${RA.toFixed(2)} kN</p>
+
+    <p><b>Reaction at B:</b> ${RB.toFixed(2)} kN</p>
+
+    <p><b>Maximum Bending Moment:</b>
+    ${maxMoment.toFixed(2)} kN·m</p>
+
+    <p><b>Maximum Shear Force:</b>
+    ${Math.max(Math.abs(RA), Math.abs(RB)).toFixed(2)} kN</p>
+  `;
+}
+
+</script>
+
+</body>
+</html>

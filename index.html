@@ -132,3 +132,654 @@ function calculate() {
 
 </body>
 </html>
+<!-- ================= BEAM CALCULATION ================= -->
+
+<section id="beam-calculation" class="calculator-section">
+
+    <h2>Beam Calculation</h2>
+
+    <!-- 1. SUPPORT CONDITIONS -->
+    <div class="beam-category">
+        <h3>1. Based on Support Conditions</h3>
+
+        <div class="option-grid">
+
+            <button onclick="selectBeamType('Simply Supported Beam')">
+                Simply Supported Beam
+            </button>
+
+            <button onclick="selectBeamType('Cantilever Beam')">
+                Cantilever Beam
+            </button>
+
+            <button onclick="selectBeamType('Fixed Beam')">
+                Fixed Beam
+            </button>
+
+            <button onclick="selectBeamType('Continuous Beam')">
+                Continuous Beam
+            </button>
+
+            <button onclick="selectBeamType('Propped Cantilever Beam')">
+                Propped Cantilever Beam
+            </button>
+
+            <button onclick="selectBeamType('Overhanging Beam')">
+                Overhanging Beam
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- 2. CROSS SECTION -->
+    <div class="beam-category">
+
+        <h3>2. Based on Cross-Section</h3>
+
+        <div class="option-grid">
+
+            <button onclick="selectCrossSection('Rectangular Beam')">
+                Rectangular Beam
+            </button>
+
+            <button onclick="selectCrossSection('T-Beam')">
+                T-Beam
+            </button>
+
+            <button onclick="selectCrossSection('I-Beam')">
+                I-Beam
+            </button>
+
+            <button onclick="selectCrossSection('Circular Beam')">
+                Circular Beam
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- 3. MATERIAL -->
+    <div class="beam-category">
+
+        <h3>3. Based on Material</h3>
+
+        <div class="option-grid">
+
+            <button onclick="selectMaterial('Wooden Beam')">
+                Wooden Beam
+            </button>
+
+            <button onclick="selectMaterial('Steel Beam')">
+                Steel Beam
+            </button>
+
+            <button onclick="selectMaterial('Reinforced Concrete Beam (RCC)')">
+                RCC Beam
+            </button>
+
+            <button onclick="selectMaterial('Composite Beam')">
+                Composite Beam
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- 4. GEOMETRY -->
+    <div class="beam-category">
+
+        <h3>4. Based on Geometry</h3>
+
+        <div class="option-grid">
+
+            <button onclick="selectGeometry('Straight Beam')">
+                Straight Beam
+            </button>
+
+            <button onclick="selectGeometry('Curved Beam')">
+                Curved Beam
+            </button>
+
+            <button onclick="selectGeometry('Tapered Beam')">
+                Tapered Beam
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- 5. LOADING -->
+    <div class="beam-category">
+
+        <h3>5. Loading Condition</h3>
+
+        <div class="option-grid">
+
+            <button onclick="selectLoad('Point Load')">
+                Point Load
+            </button>
+
+            <button onclick="selectLoad('UDL')">
+                UDL
+            </button>
+
+            <button onclick="selectLoad('UVL')">
+                UVL
+            </button>
+
+            <button onclick="selectLoad('Applied Moment')">
+                Applied Moment
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- SELECTED OPTIONS -->
+    <div class="selected-beam">
+
+        <h3>Selected Beam Configuration</h3>
+
+        <p>
+            <strong>Support:</strong>
+            <span id="selectedSupport">Not Selected</span>
+        </p>
+
+        <p>
+            <strong>Cross-Section:</strong>
+            <span id="selectedSection">Not Selected</span>
+        </p>
+
+        <p>
+            <strong>Material:</strong>
+            <span id="selectedMaterial">Not Selected</span>
+        </p>
+
+        <p>
+            <strong>Geometry:</strong>
+            <span id="selectedGeometry">Not Selected</span>
+        </p>
+
+        <p>
+            <strong>Loading:</strong>
+            <span id="selectedLoad">Not Selected</span>
+        </p>
+
+    </div>
+
+
+    <!-- INPUT AREA -->
+    <div id="beamInputArea" class="beam-input-area">
+
+        <h3>Beam Input</h3>
+
+        <label>Beam Length (m)</label>
+        <input type="number" id="beamLength" placeholder="Enter length">
+
+        <label>Load (kN)</label>
+        <input type="number" id="beamLoad" placeholder="Enter load">
+
+        <label>Load Position (m)</label>
+        <input type="number" id="loadPosition" placeholder="Enter position">
+
+        <button onclick="calculateBeam()">
+            Calculate
+        </button>
+
+    </div>
+
+
+    <!-- RESULT -->
+    <div id="beamResult" class="beam-result">
+
+        <h3>Result</h3>
+
+        <p id="resultText">
+            Select beam conditions and enter values.
+        </p>
+
+    </div>
+
+</section>
+// ================= BEAM CALCULATION =================
+
+let selectedBeam = "";
+let selectedSection = "";
+let selectedBeamMaterial = "";
+let selectedBeamGeometry = "";
+let selectedBeamLoad = "";
+
+
+function selectBeamType(type) {
+
+    selectedBeam = type;
+
+    document.getElementById("selectedSupport").innerText = type;
+
+    console.log("Support selected:", type);
+}
+
+
+function selectCrossSection(section) {
+
+    selectedSection = section;
+
+    document.getElementById("selectedSection").innerText = section;
+
+    console.log("Cross section selected:", section);
+}
+
+
+function selectMaterial(material) {
+
+    selectedBeamMaterial = material;
+
+    document.getElementById("selectedMaterial").innerText = material;
+
+    console.log("Material selected:", material);
+}
+
+
+function selectGeometry(geometry) {
+
+    selectedBeamGeometry = geometry;
+
+    document.getElementById("selectedGeometry").innerText = geometry;
+
+    console.log("Geometry selected:", geometry);
+}
+
+
+function selectLoad(load) {
+
+    selectedBeamLoad = load;
+
+    document.getElementById("selectedLoad").innerText = load;
+
+    updateLoadInputs(load);
+
+    console.log("Load selected:", load);
+}
+
+
+// Change input fields according to loading condition
+
+function updateLoadInputs(load) {
+
+    const inputArea = document.getElementById("beamInputArea");
+
+    if (load === "UDL") {
+
+        inputArea.innerHTML = `
+
+            <h3>UDL Input</h3>
+
+            <label>Beam Length (m)</label>
+            <input type="number" id="beamLength"
+                   placeholder="Enter beam length">
+
+            <label>UDL (kN/m)</label>
+            <input type="number" id="udlValue"
+                   placeholder="Enter UDL">
+
+            <button onclick="calculateUDL()">
+                Calculate UDL
+            </button>
+        `;
+    }
+
+    else if (load === "UVL") {
+
+        inputArea.innerHTML = `
+
+            <h3>UVL Input</h3>
+
+            <label>Beam Length (m)</label>
+            <input type="number" id="beamLength"
+                   placeholder="Enter beam length">
+
+            <label>Starting Load (kN/m)</label>
+            <input type="number" id="uvlStart"
+                   placeholder="Enter starting load">
+
+            <label>Ending Load (kN/m)</label>
+            <input type="number" id="uvlEnd"
+                   placeholder="Enter ending load">
+
+            <button onclick="calculateUVL()">
+                Calculate UVL
+            </button>
+        `;
+    }
+
+    else if (load === "Applied Moment") {
+
+        inputArea.innerHTML = `
+
+            <h3>Applied Moment Input</h3>
+
+            <label>Beam Length (m)</label>
+            <input type="number" id="beamLength"
+                   placeholder="Enter beam length">
+
+            <label>Moment (kN·m)</label>
+            <input type="number" id="momentValue"
+                   placeholder="Enter moment">
+
+            <button onclick="calculateMoment()">
+                Calculate Moment
+            </button>
+        `;
+    }
+
+    else {
+
+        inputArea.innerHTML = `
+
+            <h3>Point Load Input</h3>
+
+            <label>Beam Length (m)</label>
+            <input type="number" id="beamLength"
+                   placeholder="Enter beam length">
+
+            <label>Point Load (kN)</label>
+            <input type="number" id="beamLoad"
+                   placeholder="Enter load">
+
+            <label>Load Position (m)</label>
+            <input type="number" id="loadPosition"
+                   placeholder="Enter position">
+
+            <button onclick="calculateBeam()">
+                Calculate
+            </button>
+        `;
+    }
+}
+
+
+// Basic Point Load calculation
+// Simply Supported Beam
+
+function calculateBeam() {
+
+    const L = parseFloat(document.getElementById("beamLength").value);
+    const P = parseFloat(document.getElementById("beamLoad").value);
+    const a = parseFloat(document.getElementById("loadPosition").value);
+
+    if (isNaN(L) || isNaN(P) || isNaN(a)) {
+
+        document.getElementById("resultText").innerText =
+            "Please enter all required values.";
+
+        return;
+    }
+
+    const b = L - a;
+
+    if (selectedBeam === "Simply Supported Beam") {
+
+        const RA = (P * b) / L;
+        const RB = (P * a) / L;
+
+        const Mmax = (P * a * b) / L;
+
+        document.getElementById("beamResult").innerHTML = `
+
+            <h3>Step-by-Step Solution</h3>
+
+            <p><strong>Given:</strong></p>
+
+            <p>
+                Beam Length = ${L} m<br>
+                Point Load = ${P} kN<br>
+                Load Position = ${a} m
+            </p>
+
+            <p><strong>Step 1: Calculate B</strong></p>
+
+            <p>
+                B = L - a<br>
+                B = ${L} - ${a}<br>
+                B = ${b.toFixed(3)} m
+            </p>
+
+            <p><strong>Step 2: Reaction at A</strong></p>
+
+            <p>
+                RA = P × B / L<br>
+                RA = ${RA.toFixed(3)} kN
+            </p>
+
+            <p><strong>Step 3: Reaction at B</strong></p>
+
+            <p>
+                RB = P × A / L<br>
+                RB = ${RB.toFixed(3)} kN
+            </p>
+
+            <p><strong>Maximum Bending Moment</strong></p>
+
+            <p>
+                Mmax = P × A × B / L<br>
+                Mmax = ${Mmax.toFixed(3)} kN·m
+            </p>
+
+        `;
+    }
+
+    else {
+
+        document.getElementById("beamResult").innerHTML = `
+
+            <h3>Selected Beam</h3>
+
+            <p>
+                ${selectedBeam}
+            </p>
+
+            <p>
+                Point Load calculation for this beam type
+                will be added in the next calculation module.
+            </p>
+
+        `;
+    }
+}
+
+
+// UDL
+
+function calculateUDL() {
+
+    const L = parseFloat(document.getElementById("beamLength").value);
+    const w = parseFloat(document.getElementById("udlValue").value);
+
+    if (isNaN(L) || isNaN(w)) {
+
+        document.getElementById("beamResult").innerHTML =
+            "<p>Please enter beam length and UDL.</p>";
+
+        return;
+    }
+
+    const totalLoad = w * L;
+
+    document.getElementById("beamResult").innerHTML = `
+
+        <h3>UDL Calculation</h3>
+
+        <p>
+            Total Load = w × L
+        </p>
+
+        <p>
+            = ${w} × ${L}
+        </p>
+
+        <p>
+            <strong>Total Load = ${totalLoad.toFixed(3)} kN</strong>
+        </p>
+
+    `;
+}
+
+
+// UVL
+
+function calculateUVL() {
+
+    const L = parseFloat(document.getElementById("beamLength").value);
+    const w1 = parseFloat(document.getElementById("uvlStart").value);
+    const w2 = parseFloat(document.getElementById("uvlEnd").value);
+
+    if (isNaN(L) || isNaN(w1) || isNaN(w2)) {
+
+        document.getElementById("beamResult").innerHTML =
+            "<p>Please enter all UVL values.</p>";
+
+        return;
+    }
+
+    const totalLoad = ((w1 + w2) / 2) * L;
+
+    document.getElementById("beamResult").innerHTML = `
+
+        <h3>UVL Calculation</h3>
+
+        <p>
+            Average Load = (w₁ + w₂) / 2
+        </p>
+
+        <p>
+            Average Load = (${w1} + ${w2}) / 2
+        </p>
+
+        <p>
+            Equivalent Load = Average Load × L
+        </p>
+
+        <p>
+            <strong>
+                Equivalent Load = ${totalLoad.toFixed(3)} kN
+            </strong>
+        </p>
+
+    `;
+}
+
+
+// Applied Moment
+
+function calculateMoment() {
+
+    const M = parseFloat(
+        document.getElementById("momentValue").value
+    );
+
+    if (isNaN(M)) {
+
+        document.getElementById("beamResult").innerHTML =
+            "<p>Please enter moment value.</p>";
+
+        return;
+    }
+
+    document.getElementById("beamResult").innerHTML = `
+
+        <h3>Applied Moment</h3>
+
+        <p>
+            Applied Moment = ${M} kN·m
+        </p>
+
+        <p>
+            <strong>
+                Moment = ${M.toFixed(3)} kN·m
+            </strong>
+        </p>
+
+    `;
+}
+/* ================= BEAM CALCULATION ================= */
+
+.beam-category {
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 12px;
+    background: #f5f5f5;
+}
+
+.beam-category h3 {
+    margin-bottom: 15px;
+}
+
+.option-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.option-grid button {
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.option-grid button:hover {
+    transform: scale(1.02);
+}
+
+.selected-beam {
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 12px;
+    background: #eeeeee;
+}
+
+.beam-input-area {
+    margin: 20px 0;
+    padding: 20px;
+    border-radius: 12px;
+    background: #f5f5f5;
+}
+
+.beam-input-area label {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 5px;
+}
+
+.beam-input-area input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 7px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.beam-input-area button {
+    margin-top: 18px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.beam-result {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    background: #f5f5f5;
+}
+
+@media (max-width: 600px) {
+
+    .option-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
